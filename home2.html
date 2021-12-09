@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>HomePage</title>
+    
+  </head>
+
+  <body>
+    <div class="main">
+      <nav>
+        <div class="logo">
+          <img src="logo.png" alt="logo" />
+          <!--Add the Picture-->
+        </div>
+        <div class="nav-links">
+          <ul>
+            <li>
+              <b><a href="#">Home</a></b>
+            </li>
+            <li>
+              <b><a href="#">About</a></b>
+            </li>
+            <li>
+              <b><a href="#">Authors</a></b>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <h1>
+        <center><b>Welcome to the Hospital Bill System!</b></center>
+      </h1>
+      <form>
+        <div class="commands">
+          <div>
+            <label for="insert">TYPE IN THE SQL QUERY</label>
+            <input
+              id="insert-command"
+              type="text"
+              placeholder="Enter the SQL Commands"
+              limit="600"
+            />
+            <button id="insert-button" type="button">INSERT</button>
+          </div>
+          <div id="query-output"></div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
+<script type="text/javascript">
+  const insert = document.getElementById("insert-command");
+  const button = document.getElementById("insert-button");
+  const url = "http://localhost:5000";
+  const queryOutput = document.getElementById("query-output");
+  button.onclick = async (event) => {
+    try {
+      event.preventDefault();
+      // console.log(insert.value, event);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(insert.value),
+      }).then((res) => res.json());
+      // console.log(response);
+      const { fields, rows } = response;
+      console.log(fields);
+      let ans = "";
+      for (field of fields) {
+          ans += field.name + "\t";
+      }
+      ans += '\n';
+      for (row of rows) {
+        let rowValue = "";
+        // console.log(row);
+        for (field of fields) {
+          console.log(field.name, row[field.name]);
+          rowValue += row[field.name] + "\t";
+        }
+        ans += rowValue + "\n";
+      }
+      console.log(ans);
+      queryOutput.innerText = ans;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+</script>
